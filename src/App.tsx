@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./App.module.scss";
 import initVoiceRequest from "./initVoiceRequest";
 import VoiceInput from "./VoiceInput";
