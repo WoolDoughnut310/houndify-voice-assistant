@@ -10,7 +10,6 @@ interface VoiceInputProps {
 }
 
 export default function VoiceInput({ transcription }: VoiceInputProps) {
-    const wave = useRef<Wave | null>(null);
     const canvasEl = useRef<HTMLCanvasElement>(null);
     const [recorder] = useAtom(recorderAtom);
     const [recording] = useAtom(recordingAtom);
@@ -25,15 +24,15 @@ export default function VoiceInput({ transcription }: VoiceInputProps) {
 
         recorder.on("start", () => {
             if (canvasEl.current) {
-                wave.current = new Wave(
+                let wave = new Wave(
                     {
                         source: recorder.source as MediaElementAudioSourceNode,
                         context: recorder.audioCtx as AudioContext,
                     },
                     canvasEl.current
                 );
-                wave.current.addAnimation(
-                    new wave.current.animations.Lines({
+                wave.addAnimation(
+                    new wave.animations.Lines({
                         top: true,
                     })
                 );
