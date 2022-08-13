@@ -18,6 +18,4 @@ app.get(
     })
 );
 
-app.get("/textSearchProxy", houndifyExpress.createTextProxyHandler());
-
 app.listen(process.env.PORT || 8080);
