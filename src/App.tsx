@@ -25,13 +25,19 @@ const say = (text: string) => {
 };
 
 function App() {
-    const voiceRequest = useRef<any>(null);
+    // Keep hold of the state
     const conversationState = useRef<any>(null);
+
+    // Holds what the user is currently saying
     const [transcription, setTranscription] = useState("");
+
+    // Any errors from the voice request will be stored here
     const [error, setError] = useState("");
 
     const [recorder, setRecorder] = useAtom(recorderAtom);
     const [recording, _setRecording] = useAtom(recordingAtom);
+
+    // Stores the result from voice requests
     const [result, setResult] = useState<{ [key: string]: any }>({});
 
     const setRecording = (value: boolean) => {
@@ -73,9 +79,11 @@ function App() {
         const audioRecorder = new window.Houndify.AudioRecorder();
         setRecorder(audioRecorder);
 
+        let voiceRequest: any;
+
         audioRecorder.on("start", () => {
             setRecording(true);
-            voiceRequest.current = initVoiceRequest(
+            voiceRequest = initVoiceRequest(
                 audioRecorder,
                 conversationState.current,
                 {
@@ -87,23 +95,19 @@ function App() {
         });
 
         audioRecorder.on("data", (data: any) => {
-            voiceRequest.current.write(data);
+            voiceRequest.write(data);
         });
 
         audioRecorder.on("end", () => {
-            voiceRequest.current.end();
+            voiceRequest.end();
             setRecording(false);
         });
 
         audioRecorder.on("error", () => {
-            voiceRequest.current.abort();
+            voiceRequest.abort();
             setRecording(false);
         });
     }, []);
-
-    useEffect(() => {
-        if (!Object.keys(result).length) return;
-    }, [result]);
 
     return (
         <div className={styles.root}>
