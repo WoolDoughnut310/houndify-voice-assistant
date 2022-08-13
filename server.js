@@ -4,6 +4,8 @@ const houndifyExpress = require("houndify").HoundifyExpress;
 const app = express();
 require("dotenv").config({ path: "./.env" });
 
+const PORT = process.env.PORT || 8080;
+
 app.use(express.static(path.join(__dirname, "build")));
 
 app.get("/", function (req, res) {
@@ -18,4 +20,4 @@ app.get(
     })
 );
 
-app.listen(process.env.PORT || 8080);
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
