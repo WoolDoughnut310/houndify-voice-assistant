@@ -47,6 +47,7 @@
   },
   "proxy": "http://localhost:8080",
   "devDependencies": {
+    "@types/howler": "^2.2.7",
     "sass": "^1.54.4"
   }
 }
