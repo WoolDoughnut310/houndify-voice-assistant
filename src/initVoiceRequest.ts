@@ -8,11 +8,7 @@ export default function initVoiceRequest(
     // @ts-ignore (2339)
     const voiceRequest = new window.Houndify.VoiceRequest({
         //Your Houndify Client ID
-        clientId: "4UZ4b3UN6ByczZr9xVYrgw==",
-
-        //For testing environment you might want to authenticate on frontend without Node.js server.
-        //In that case you may pass in your Houndify Client Key instead of "authURL".
-        //clientKey: "YOUR_CLIENT_KEY",
+        clientId: "{YOUR_CLIENT_ID}",
 
         authURL: "/houndifyAuth",
 
