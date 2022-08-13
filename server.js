@@ -1,14 +1,24 @@
 const express = require("express");
 const path = require("path");
+const houndifyExpress = require("houndify").HoundifyExpress;
 const app = express();
-app.use(express.static(path.join(__dirname, "build")));
+require("dotenv").config({ path: "./.env" });
 
-app.get("/ping", function (req, res) {
-    return res.send("pong");
-});
+app.use(express.static(path.join(__dirname, "build")));
 
 app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname, "build", "index.html"));
 });
+
+app.get(
+    "/houndifyAuth",
+    houndifyExpress.createAuthenticationHandler({
+        clientId: process.env.HOUNDIFY_CLIENT_ID,
+        clientKey: process.env.HOUNDIFY_CLIENT_KEY,
+    })
+);
+
+//proxies text requests
+app.post("/textSearchProxy", houndifyExpress.createTextProxyHandler());
 
 app.listen(process.env.PORT || 8080);
