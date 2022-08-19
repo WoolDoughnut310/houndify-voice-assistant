@@ -79,7 +79,13 @@ app.post("/yt-download", async function (req, res) {
         return res.json({ cid });
     }
 
-    const args = [`https://www.youtube.com/watch?v=${id}`, "-f", "ba"];
+    const args = [
+        `https://www.youtube.com/watch?v=${id}`,
+        "-f",
+        "ba",
+        "--ffmpeg-location",
+        ".",
+    ];
 
     try {
         const filename = `${id}.webm`;
