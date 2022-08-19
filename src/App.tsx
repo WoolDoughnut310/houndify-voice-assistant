@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./App.module.scss";
-import initVoiceRequest from "./initVoiceRequest";
+import initVoiceRequest from "./lib/initVoiceRequest";
 import VoiceInput from "./VoiceInput";
 import { useAtom } from "jotai";
-import { recorderAtom, recordingAtom } from "./store";
+import { recorderAtom, recordingAtom } from "./lib/store";
 
 import startSound from "./audio/start.wav";
 import stopSound from "./audio/stop.wav";
