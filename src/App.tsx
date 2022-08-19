@@ -4,10 +4,10 @@ import initVoiceRequest from "./initVoiceRequest";
 import VoiceInput from "./VoiceInput";
 import { useAtom } from "jotai";
 import { recorderAtom, recordingAtom } from "./store";
-import { Howl } from "howler";
 
 import startSound from "./audio/start.wav";
 import stopSound from "./audio/stop.wav";
+import playSound from "./lib/playSound";
 
 const sources = {
     start: startSound,
@@ -37,25 +37,15 @@ function App() {
     const [recorder, setRecorder] = useAtom(recorderAtom);
     const [recording, _setRecording] = useAtom(recordingAtom);
 
-    // Stores the result from voice requests
-    const [result, setResult] = useState<{ [key: string]: any }>({});
-
     const setRecording = (value: boolean) => {
         playSound(sources[value ? "start" : "stop"]);
         _setRecording(value);
-    };
-
-    const playSound = (src: string) => {
-        new Howl({
-            src,
-        }).play();
     };
 
     const onResponse = useCallback((response: any, info: any) => {
         if (response.AllResults && response.AllResults.length) {
             const result = response.AllResults[0];
             conversationState.current = result.ConversationState;
-            setResult(result);
             handleResult(result);
             setTranscription("");
         }
