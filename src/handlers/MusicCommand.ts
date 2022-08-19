@@ -2,6 +2,7 @@ import axios from "axios";
 import playSound from "../lib/playSound";
 import { Web3Storage } from "web3.storage";
 import { toast, ToastContentProps } from "react-toastify";
+import { Howler } from "howler";
 
 const SUCCESS_RESULT = "AutoPlayResult";
 const FAILED_RESULT = "AutoPlayFailedResult";
@@ -57,6 +58,7 @@ const handleMusicCommand = async (result: any) => {
         const cid = await downloadYT(ytID);
         const audioURL = await retrieveFileURL(cid);
 
+        Howler.stop();
         playSound(audioURL, { format: "webm" });
 
         // Play music
@@ -67,11 +69,15 @@ const handleMusicCommand = async (result: any) => {
 };
 
 export default function handle(result: any) {
+    // If there is no successful result
+    // then no song will be able to play
     if (!result[SUCCESS_RESULT]) {
         return result;
     }
 
     switch (result.MusicCommandKind) {
+        // Both music command kinds have
+        // the same data, it's just a song
         case "MusicChartsCommand":
         case "MusicSearchCommand":
             const onResponse = ({ data }: ToastContentProps<any>) => {
@@ -91,5 +97,7 @@ export default function handle(result: any) {
                 },
                 { type: "info" }
             );
+        default:
+            return result;
     }
 }

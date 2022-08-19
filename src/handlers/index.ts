@@ -1,5 +1,6 @@
 // Stores the command kinds from Houndify that we are able
 // to process, with a respective module in the directory
+// , so we'll add more here later
 const COMMANDS = ["MusicCommand"];
 
 // Returns a new version of the result, typically
