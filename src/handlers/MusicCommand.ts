@@ -22,19 +22,11 @@ const getTitle = (title: string, artist: string) => {
         .trim();
 };
 
-const searchTrack = async (track: any) => {
+const downloadTrack = async (track: any) => {
     let title = getTitle(track.TrackName, track.ArtistName);
 
-    let { data } = await axios.get("/yt-search", {
+    let { data } = await axios.post("/yt-download", null, {
         params: { q: title },
-    });
-
-    return data.id as string;
-};
-
-const downloadYT = async (id: string) => {
-    let { data } = await axios.post("/yt-download", {
-        id: id,
     });
 
     return data.cid as string;
@@ -54,8 +46,7 @@ const retrieveFileURL = async (cid: string) => {
 const handleMusicCommand = async (result: any) => {
     try {
         let track = result.NativeData.Tracks[0];
-        const ytID = await searchTrack(track);
-        const cid = await downloadYT(ytID);
+        const cid = await downloadTrack(track);
         const audioURL = await retrieveFileURL(cid);
 
         Howler.stop();
