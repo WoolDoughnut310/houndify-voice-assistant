@@ -2,6 +2,7 @@ import axios from "axios";
 import playSound from "../lib/playSound";
 import { Web3Storage } from "web3.storage";
 import { toast, ToastContentProps } from "react-toastify";
+import { Howler } from "howler";
 
 const SUCCESS_RESULT = "AutoPlayResult";
 const FAILED_RESULT = "AutoPlayFailedResult";
@@ -21,19 +22,11 @@ const getTitle = (title: string, artist: string) => {
         .trim();
 };
 
-const searchTrack = async (track: any) => {
+const downloadTrack = async (track: any) => {
     let title = getTitle(track.TrackName, track.ArtistName);
 
-    let { data } = await axios.get("/yt-search", {
+    let { data } = await axios.post("/yt-download", null, {
         params: { q: title },
-    });
-
-    return data.id as string;
-};
-
-const downloadYT = async (id: string) => {
-    let { data } = await axios.post("/yt-download", {
-        id: id,
     });
 
     return data.cid as string;
@@ -53,11 +46,12 @@ const retrieveFileURL = async (cid: string) => {
 const handleMusicCommand = async (result: any) => {
     try {
         let track = result.NativeData.Tracks[0];
-        const ytID = await searchTrack(track);
-        const cid = await downloadYT(ytID);
+        const cid = await downloadTrack(track);
         const audioURL = await retrieveFileURL(cid);
 
-        playSound(audioURL, { format: "webm" });
+        Howler.stop();
+        playSound(audioURL, { format: "webm" }, "music");
+        localStorage.setItem("lastSong", JSON.stringify(audioURL));
 
         // Play music
         return result[SUCCESS_RESULT];
@@ -67,11 +61,15 @@ const handleMusicCommand = async (result: any) => {
 };
 
 export default function handle(result: any) {
+    // If there is no successful result
+    // then no song will be able to play
     if (!result[SUCCESS_RESULT]) {
         return result;
     }
 
     switch (result.MusicCommandKind) {
+        // Both music command kinds have
+        // the same data, it's just a song
         case "MusicChartsCommand":
         case "MusicSearchCommand":
             const onResponse = ({ data }: ToastContentProps<any>) => {
@@ -91,5 +89,7 @@ export default function handle(result: any) {
                 },
                 { type: "info" }
             );
+        default:
+            return result;
     }
 }

@@ -1,12 +1,20 @@
-import { Howler, Howl, HowlOptions } from "howler";
+import { Howl, HowlOptions } from "howler";
+
+export let music: Howl;
 
 export default function playSound(
     src: string,
-    options?: Omit<HowlOptions, "src">
+    options?: Omit<HowlOptions, "src">,
+    type: "music" | "sound" = "sound"
 ) {
-    Howler.stop();
-    new Howl({
+    const sound = new Howl({
         src,
         ...options,
-    }).play();
+    });
+
+    if (type === "music") {
+        music = sound;
+    }
+
+    return sound.play();
 }

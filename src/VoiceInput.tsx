@@ -2,7 +2,7 @@ import { Wave } from "@foobar404/wave";
 import { useAtom } from "jotai";
 import { useRef } from "react";
 import { Mic, MicOff } from "react-feather";
-import { recorderAtom, recordingAtom } from "./store";
+import { recorderAtom, recordingAtom } from "./lib/store";
 import styles from "./VoiceInput.module.scss";
 
 interface VoiceInputProps {

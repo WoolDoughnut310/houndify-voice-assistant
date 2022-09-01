@@ -37,19 +37,38 @@ app.get(
     })
 );
 
-app.get("/yt-search", async function (req, res) {
+app.post("/yt-download", async function (req, res) {
     try {
-        const { results } = await search(req.query.q, {
-            key: process.env.YOUTUBE_DATA_API_KEY,
-            maxResults: 3,
-        });
-        const result = results[0];
+        const ytID = await searchYT(req.query.q);
 
-        res.json({ id: result.id });
+        // First look through our store
+        let cid = (await readCIDFile())[ytID];
+
+        if (cid) {
+            return res.json({ cid });
+        }
+
+        cid = await uploadYTToWeb3(ytID);
+        res.json({
+            cid,
+        });
     } catch (error) {
         res.status(500).send(error);
     }
 });
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
+// Helper functions
+const searchYT = async (q) => {
+    const { results } = await search(q, {
+        key: process.env.YOUTUBE_DATA_API_KEY,
+        maxResults: 3,
+    });
+    const result = results[0];
+
+    return result.id;
+};
 
 const readCIDFile = async () => {
     let data = {};
@@ -64,35 +83,26 @@ const readCIDFile = async () => {
     return data;
 };
 
-const saveCIDMapping = async (id, cid) => {
+const saveCIDMapping = async (ytID, cid) => {
     let data = await readCIDFile();
-    data[id] = cid;
+    data[ytID] = cid;
     await fs.writeFile(cidFilename, JSON.stringify(data));
 };
 
-app.post("/yt-download", async function (req, res) {
-    const { id } = req.body;
+const uploadYTToWeb3 = async (ytID) => {
+    const ytdlpArgs = [
+        `https://www.youtube.com/watch?v=${ytID}`,
+        "-f",
+        "ba",
+        "--ffmpeg-location",
+        ".",
+    ];
 
-    let cid = (await readCIDFile())[id];
+    const filename = `${ytID}.webm`;
+    let cid = await web3Storage.put([
+        { name: filename, stream: () => ytDlpWrap.execStream(ytdlpArgs) },
+    ]);
 
-    if (cid) {
-        return res.json({ cid });
-    }
-
-    const args = [`https://www.youtube.com/watch?v=${id}`, "-f", "ba"];
-
-    try {
-        const filename = `${id}.webm`;
-        cid = await web3Storage.put([
-            { name: filename, stream: () => ytDlpWrap.execStream(args) },
-        ]);
-        await saveCIDMapping(id, cid);
-        res.json({
-            cid,
-        });
-    } catch (error) {
-        res.status(500).send(error);
-    }
-});
-
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+    await saveCIDMapping(ytID, cid);
+    return cid;
+};

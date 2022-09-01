@@ -1,6 +1,7 @@
 // Stores the command kinds from Houndify that we are able
 // to process, with a respective module in the directory
-const COMMANDS = ["MusicCommand"];
+// , so we'll add more here later
+const COMMANDS = ["MusicCommand", "MusicPlayerCommand"];
 
 // Returns a new version of the result, typically
 // result["ClientActionSucceededResult"], or just the initial result
