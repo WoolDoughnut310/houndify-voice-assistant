@@ -51,7 +51,7 @@ const handleMusicCommand = async (result: any) => {
 
         Howler.stop();
         playSound(audioURL, { format: "webm" }, "music");
-        localStorage.setItem("lastSong", JSON.stringify(audioURL));
+        localStorage.setItem("lastSong", audioURL);
 
         // Play music
         return result[SUCCESS_RESULT];
