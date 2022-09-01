@@ -64,7 +64,7 @@ function App() {
     }, []);
 
     const handleResult = async (result: any) => {
-        // We'll add more here later
+        setError("");
         let newResult = await handleCommand(result);
         say(newResult.SpokenResponseLong);
     };
