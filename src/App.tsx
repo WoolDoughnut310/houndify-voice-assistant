@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./App.module.scss";
 import initVoiceRequest from "./lib/initVoiceRequest";
 import VoiceInput from "./VoiceInput";
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { recorderAtom, recordingAtom } from "./lib/store";
 
 import startSound from "./audio/start.wav";
@@ -38,8 +38,8 @@ function App() {
     // Any errors from the voice request will be stored here
     const [error, setError] = useState("");
 
-    const [recorder, setRecorder] = useAtom(recorderAtom);
-    const [recording, _setRecording] = useAtom(recordingAtom);
+    const setRecorder = useSetAtom(recorderAtom);
+    const _setRecording = useSetAtom(recordingAtom);
 
     const setRecording = (value: boolean) => {
         playSound(sources[value ? "start" : "stop"]);
