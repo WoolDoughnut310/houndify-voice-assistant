@@ -78,8 +78,6 @@ const handlePlayerCommand = async (result: any) => {
 };
 
 export default function handle(result: any) {
-    // If there is no successful result
-    // then no song will be able to play
     if (!result[SUCCESS_RESULT]) {
         return result;
     }
