@@ -8,7 +8,7 @@ export default function initVoiceRequest(
     // @ts-ignore (2339)
     const voiceRequest = new window.Houndify.VoiceRequest({
         //Your Houndify Client ID
-        clientId: "{YOUR_CLIENT_ID}",
+        clientId: "4UZ4b3UN6ByczZr9xVYrgw==",
 
         authURL: "/houndifyAuth",
 
