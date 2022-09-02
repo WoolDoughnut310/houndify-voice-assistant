@@ -49,6 +49,7 @@ app.post("/yt-download", async function (req, res) {
         }
 
         cid = await uploadYTToWeb3(ytID);
+        await saveCIDMapping(ytID, cid);
         res.json({
             cid,
         });
@@ -103,6 +104,5 @@ const uploadYTToWeb3 = async (ytID) => {
         { name: filename, stream: () => ytDlpWrap.execStream(ytdlpArgs) },
     ]);
 
-    await saveCIDMapping(ytID, cid);
     return cid;
 };
