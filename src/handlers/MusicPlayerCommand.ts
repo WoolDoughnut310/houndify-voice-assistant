@@ -2,11 +2,11 @@ import { Howler } from "howler";
 import playSound, { music } from "../lib/playSound";
 
 const SUCCESS_RESULT = "SuccessfulPlayerCommand";
-const FAILED_RESULT = "AutoPlayFailedResult";
+const FAILED_RESULT = "ClientActionFailedResult";
 
 const VOLUME_DELTA = 5 / 100;
 
-const handlePlayerCommand = async (result: any) => {
+const handlePlayerCommand = (result: any) => {
     try {
         let commandType = result.NativeData.CommandType;
         commandType = commandType.slice(22);
