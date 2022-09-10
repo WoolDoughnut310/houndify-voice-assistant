@@ -88,7 +88,6 @@ app.post("/acr-identify", async function (req, res) {
         const artist = metadata.artists.map((artist) => artist.name).join(", ");
         res.status(200).json({ title, artist });
     } catch (error) {
-        console.error(error);
         res.status(500).send(error);
     }
 });
