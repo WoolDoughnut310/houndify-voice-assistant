@@ -12,20 +12,11 @@ import playSound from "./lib/playSound";
 import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
+import say from "./lib/say";
 
 const sources = {
     start: startSound,
     stop: stopSound,
-};
-
-const speech = new SpeechSynthesisUtterance();
-
-// Set to your language code
-speech.lang = "en";
-
-const say = (text: string) => {
-    speech.text = text;
-    window.speechSynthesis.speak(speech);
 };
 
 function App() {
