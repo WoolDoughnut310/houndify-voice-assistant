@@ -66,7 +66,6 @@ function App() {
         setRecorder(audioRecorder);
 
         let voiceRequest: any;
-        console.log("recorder is", audioRecorder);
 
         audioRecorder.on("start", () => {
             setRecording(true);
@@ -82,7 +81,6 @@ function App() {
         });
 
         audioRecorder.on("data", (data: any) => {
-            console.log("data is", data);
             voiceRequest.write(data);
         });
 
