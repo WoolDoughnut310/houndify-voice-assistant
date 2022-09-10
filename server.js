@@ -6,6 +6,8 @@ const { default: YTDlpWrap } = require("yt-dlp-wrap");
 const houndifyExpress = require("houndify").HoundifyExpress;
 const app = express();
 const { Web3Storage } = require("web3.storage");
+const acrcloud = require("acrcloud");
+const formidable = require("formidable");
 
 const { existsSync } = require("fs");
 const fs = require("fs/promises");
@@ -21,6 +23,12 @@ const web3Storage = new Web3Storage({
 });
 
 const cidFilename = "song_cids.json";
+
+const acr = new acrcloud({
+    host: process.env.ACRCLOUD_HOST,
+    access_key: process.env.ACRCLOUD_ACCESS_KEY,
+    access_secret: process.env.ACRCLOUD_SECRET,
+});
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "build")));
@@ -54,6 +62,33 @@ app.post("/yt-download", async function (req, res) {
             cid,
         });
     } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.post("/acr-identify", async function (req, res) {
+    try {
+        const form = formidable();
+
+        const { files } = await new Promise((resolve, reject) =>
+            form.parse(req, (err, fields, files) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve({ fields, files });
+            })
+        );
+
+        const filePath = files.file.filepath;
+
+        const metadata = await identifyACR(filePath);
+
+        const title = metadata.title;
+        const artist = metadata.artists.map((artist) => artist.name).join(", ");
+        res.status(200).json({ title, artist });
+    } catch (error) {
+        console.error(error);
         res.status(500).send(error);
     }
 });
@@ -105,4 +140,22 @@ const uploadYTToWeb3 = async (ytID) => {
     ]);
 
     return cid;
+};
+
+const identifyACR = async (filePath) => {
+    const fileData = await fs.readFile(filePath);
+
+    const data = await acr.identify(fileData);
+
+    if (data.status.code !== 0) {
+        throw new Error(data.status.msg);
+    }
+
+    const metadata = data.metadata;
+
+    if (metadata.music?.length > 0) {
+        return metadata.music[0];
+    }
+
+    throw new Error("No music found");
 };
