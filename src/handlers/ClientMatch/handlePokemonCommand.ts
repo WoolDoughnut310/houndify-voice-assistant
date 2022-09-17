@@ -39,24 +39,24 @@ const parsePokemonData = (data: {
 export default async function handlePokedexCommand(result: any) {
     try {
         let name = window.prompt("Enter pokemon name");
-        let stat = window.prompt("Enter stat");
+        let attribute = window.prompt("Enter attribute");
 
         if (!name) {
             throw new Error("Invalid name");
         }
 
-        if (!stat) {
-            throw new Error("Invalid stat");
+        if (!attribute || !pokemonKeys.includes(attribute.toLowerCase())) {
+            throw new Error("Invalid attribute");
         }
 
         name = name.toLowerCase();
-        stat = stat.toLowerCase();
+        attribute = attribute.toLowerCase();
 
         const pokemonData = await pokedex.getPokemonByName(name);
         const data = parsePokemonData(pokemonData);
-        const statValue = data[stat];
+        const attributeValue = data[attribute];
 
-        const response = `${name}'s ${stat} is ${statValue}`;
+        const response = `${name}'s ${attribute} is ${attributeValue}`;
 
         return { ...result, SpokenResponseLong: response };
     } catch (error: any) {
